@@ -1,5 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { TaskRow } from "./components/TaskRow";
+import { Header } from './components/Header'
+import { AddTask } from './components/AddTask';
 
 function App() {
   
@@ -25,6 +27,25 @@ function App() {
     }
   }
 
+  const createNewTask = taskName => {
+    if (!taskItems.find(t => t.name === taskName)) {
+      var data = { name: taskName };
+      fetch('http://localhost:50454/api/task', {
+        method: 'POST',
+        body: JSON.stringify(data), 
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {
+          console.log('Success:', response)
+          getTask();
+        });
+    }
+  };
+
+
   const taskTableRows = (isDone) =>
   taskItems
     .filter(task => task.completed === isDone)
@@ -34,7 +55,10 @@ function App() {
 
   return (
     <div className="App">
-      <div className="container">
+            <Header taskItems={taskItems} />
+            <div className="container-fluid">
+            <AddTask callback={createNewTask} />
+            <div className="container">
           <div className="row">
             <div className="col">
               <div className="card text-center">
@@ -73,6 +97,8 @@ function App() {
           </div>
         </div>
     </div>
+    </div>
+
   );
 }
 
