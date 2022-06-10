@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { urlTask } from './endpoints';
 import { TypeList } from './components/TypeList';
 import { TaskTable } from './components/TaskTable';
 import { Header } from './components/Header'
@@ -13,7 +14,7 @@ function App() {
 
   const getTask = () => {
     try {
-      fetch("http://localhost:50454/api/task")
+      fetch(urlTask)
         .then(
           response => response.json())
         .then(
@@ -30,7 +31,7 @@ function App() {
   const createNewTask = taskName => {
     if (!taskItems.find(t => t.name === taskName)) {
       var data = { name: taskName };
-      fetch('http://localhost:50454/api/task', {
+      fetch(urlTask, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -50,7 +51,7 @@ function App() {
     };
 
 
-    var URL = `http://localhost:50454/api/task?id=${task.id}`;
+    var URL = `${urlTask}?id=${task.id}`;
 
     fetch(URL, {
       method: 'PATCH',

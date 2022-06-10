@@ -19,7 +19,7 @@ export const AddTask = props => {
               type="text"
               className="form-control"
               aria-describedby="basic-addon2"
-              placeholder="New Task"
+              placeholder="Enter New Task"
               value={newTaskName}
               onChange={updatValue} />
             <div className="input-group-append">
