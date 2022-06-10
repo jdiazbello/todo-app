@@ -5,6 +5,10 @@ import { TaskRow } from "./TaskRow";
 
 export const TaskTable = props => {
 
+    const callBack = task => {
+        props.callback(task);
+    }
+
     return (
         <div key={props.Title} className="col">
             <div className="card text-center">
@@ -16,13 +20,14 @@ export const TaskTable = props => {
                         <thead>
                             <tr>
                                 <th>Description</th>
+                                <th>Done</th>
                             </tr>
                         </thead>
                         <tbody>
                             {
                                 props.items
                                     .map(task => (
-                                        <TaskRow key={task.id} task={task} />
+                                        <TaskRow key={task.id} task={task} callBack ={callBack}/>
                                     ))
                             }
                         </tbody>

@@ -1,30 +1,28 @@
-import React, { useState,useEffect } from 'react';
-import {TypeList} from './components/TypeList';
-import {TaskTable} from './components/TaskTable';
+import React, { useState, useEffect } from 'react';
+import { TypeList } from './components/TypeList';
+import { TaskTable } from './components/TaskTable';
 import { Header } from './components/Header'
 
 import { AddTask } from './components/AddTask';
 
 function App() {
-  
+
   const [taskItems, setTaskItems] = useState([]);
 
   useEffect(() => getTask(), []);
 
-  const getTask =() =>{
-    try{
+  const getTask = () => {
+    try {
       fetch("http://localhost:50454/api/task")
-      .then(
-        response => response.json())
-      .then(
-        data => {
-          setTaskItems(data);
-          console.log(data);
-        })
-      .catch(err => console.log(err));
+        .then(
+          response => response.json())
+        .then(
+          data => {
+            setTaskItems(data);
+          })
+        .catch(err => console.log(err));
     }
-    catch (err)
-    {
+    catch (err) {
       console.log(err);
     }
   }
@@ -34,35 +32,62 @@ function App() {
       var data = { name: taskName };
       fetch('http://localhost:50454/api/task', {
         method: 'POST',
-        body: JSON.stringify(data), 
+        body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json'
         }
       }).then(res => res.json())
         .catch(error => console.error('Error:', error))
         .then(response => {
-          console.log('Success:', response)
           getTask();
         });
     }
   };
 
+  const tableCallback = task => {
+    var data = {
+      completed: !task.completed,
+    };
+
+
+    var URL = `http://localhost:50454/api/task?id=${task.id}`;
+
+    fetch(URL, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json())
+      .catch(error => console.error('Error:', error))
+      .then(response => {
+        getTask();
+      }
+      )
+  }
+
 
   return (
     <div className="App">
-            <Header taskItems={taskItems} />
-            <div className="container-fluid">
-            <AddTask callback={createNewTask} />
-            <div className="container">
+      <Header taskItems={taskItems} />
+      <div className="container-fluid">
+        <AddTask callback={createNewTask} />
+        <div className="container">
           <div className="row">
-          {
-              TypeList.map(type =>(
-                <TaskTable key={type.title} Title={type.title} completed={type.completed} items={taskItems.filter(task =>task.completed === type.completed)}/>
+            {
+              TypeList.map(type => (
+                <TaskTable
+                  key={type.title}
+                  Title={type.title}
+                  completed={type.completed}
+                  items={taskItems.filter(task => task.completed === type.completed)}
+                  callback={tableCallback}
+                />
               ))
             }
           </div>
         </div>
-    </div>
+      </div>
     </div>
 
   );
